@@ -1,0 +1,1 @@
+export default function SimplePage({title,description}){return <section><div className="page-heading"><div><p className="eyebrow">CONFIGURACIÓN</p><h1>{title}</h1><p>{description}</p></div></div><article className="panel"><p>La arquitectura está preparada; esta pantalla se implementará después del núcleo operativo.</p></article></section>}
