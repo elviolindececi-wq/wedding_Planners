@@ -11,6 +11,7 @@ import CrmPage from './features/crm/CrmPage.jsx'
 import EventsPage from './features/events/EventsPage.jsx'
 import EventWorkspace from './features/events/EventWorkspace.jsx'
 import EventOverview from './features/events/EventOverview.jsx'
+import PlanningPage from './features/planning/PlanningPage.jsx'
 import EventSectionPlaceholder from './features/events/EventSectionPlaceholder.jsx'
 import VendorsPage from './features/vendors/VendorsPage.jsx'
 import CalendarPage from './features/calendar/CalendarPage.jsx'
@@ -41,7 +42,8 @@ export default function App() {
           <Route path="eventos" element={<EventsPage />} />
           <Route path="eventos/:eventId" element={<EventWorkspace />}>
             <Route index element={<EventOverview />} />
-            {['plan','presupuesto','proveedores','cotizaciones','pagos','invitados','mesas','diseno','experiencia','personas','dia','documentos','notas'].map(path => <Route key={path} path={path} element={<EventSectionPlaceholder />} />)}
+            <Route path="plan" element={<PlanningPage />} />
+            {['presupuesto','proveedores','cotizaciones','pagos','invitados','mesas','diseno','experiencia','personas','dia','documentos','notas'].map(path => <Route key={path} path={path} element={<EventSectionPlaceholder />} />)}
           </Route>
           <Route path="proveedores" element={<VendorsPage />} />
           <Route path="calendario" element={<CalendarPage />} />

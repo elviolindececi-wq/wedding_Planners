@@ -18,11 +18,15 @@ export default function EventWorkspace() {
   const loadEvent = useCallback(async () => {
     setLoading(true)
     setError('')
+    if (!isUuid(eventId)) {
+      navigate('/app/eventos', { replace: true })
+      return
+    }
     const { data, error: queryError } = await supabase.from('events').select('*').eq('id', eventId).maybeSingle()
     if (queryError) setError(queryError.message)
     setEvent(data || null)
     setLoading(false)
-  }, [eventId])
+  }, [eventId, navigate])
 
   useEffect(() => { loadEvent() }, [loadEvent])
 
@@ -52,4 +56,8 @@ export default function EventWorkspace() {
 function formatLongDate(value) {
   if (!value) return 'Fecha por definir'
   return new Intl.DateTimeFormat('es-PY', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' }).format(new Date(`${value}T00:00:00Z`))
+}
+
+function isUuid(value) {
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value || '')
 }

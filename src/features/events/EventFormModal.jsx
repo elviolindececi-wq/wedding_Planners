@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { supabase } from '../../lib/supabase.js'
 import { useOrganization } from '../../organization/OrganizationProvider.jsx'
+import { getPlanningTemplate } from '../planning/planningTemplates.js'
 
 const EMPTY_FORM = {
   event_type: 'wedding',
@@ -88,6 +89,13 @@ export default function EventFormModal({ open, event = null, onClose, onSaved })
       updated_at: new Date().toISOString(),
     }
 
+    const eventDateChanged = editing && event?.event_date !== payload.event_date
+    const recalculateSuggestedDates = eventDateChanged && payload.event_date
+      ? window.confirm(
+          'Cambiaste la fecha del evento. ¿Querés recalcular las fechas sugeridas de la planificación?\n\nAceptar: recalcula solo fechas automáticas.\nCancelar: conserva todas las fechas actuales.\n\nLas fechas que la planner personalizó nunca se modificarán automáticamente.'
+        )
+      : false
+
     let result
     let savedEvent
 
@@ -108,6 +116,34 @@ export default function EventFormModal({ open, event = null, onClose, onSaved })
       setError(result.error.message)
       setSubmitting(false)
       return
+    }
+
+    if (editing && recalculateSuggestedDates) {
+      const { error: recalcError } = await supabase.rpc('recalculate_event_task_dates', {
+        p_event_id: event.id,
+        p_event_date: payload.event_date,
+      })
+
+      if (recalcError) {
+        setError(`El evento se guardó, pero no se pudieron recalcular las fechas sugeridas: ${recalcError.message}`)
+        setSubmitting(false)
+        return
+      }
+    }
+
+    // Los eventos nuevos nacen con su checklist de planificación cargado.
+    // Así la planner no tiene que acordarse de activar el template después.
+    if (!editing) {
+      const template = getPlanningTemplate(savedEvent)
+      const { error: tasksError } = await supabase.from('tasks').insert(template)
+
+      if (tasksError) {
+        // Evitamos dejar un evento a medias si falló la carga inicial de tareas.
+        await supabase.from('events').delete().eq('id', savedEvent.id)
+        setError(`No se pudo cargar el checklist inicial: ${tasksError.message}`)
+        setSubmitting(false)
+        return
+      }
     }
 
     setSubmitting(false)
