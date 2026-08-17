@@ -1,7 +1,14 @@
 import { NavLink, Outlet } from 'react-router-dom'
 import { mainNavigation } from '../app/navigation.js'
+import { useAuth } from '../auth/AuthProvider.jsx'
+import { useOrganization } from '../organization/OrganizationProvider.jsx'
 
 export default function AppShell() {
+  const { user, signOut } = useAuth()
+  const { organization, subscription } = useOrganization()
+  const displayName = user?.user_metadata?.full_name || user?.email || 'Planner'
+  const initials = getInitials(displayName)
+
   return (
     <div className="app-shell">
       <aside className="sidebar">
@@ -9,7 +16,7 @@ export default function AppShell() {
           <span className="brand-mark">P</span>
           <div>
             <strong>Planner</strong>
-            <small>nombre de trabajo</small>
+            <small>{subscription?.plan_code ? `Plan ${subscription.plan_code}` : 'nombre de trabajo'}</small>
           </div>
         </div>
 
@@ -33,12 +40,24 @@ export default function AppShell() {
         <header className="topbar">
           <div>
             <small>Organización</small>
-            <strong>Estudio Demo</strong>
+            <strong>{organization?.name || 'Mi estudio'}</strong>
           </div>
-          <div className="avatar">CL</div>
+          <div className="account-area">
+            <div className="account-copy"><strong>{displayName}</strong><button className="text-btn" type="button" onClick={signOut}>Salir</button></div>
+            <div className="avatar" title={displayName}>{initials}</div>
+          </div>
         </header>
         <div className="page-wrap"><Outlet /></div>
       </main>
     </div>
   )
+}
+
+function getInitials(value) {
+  return value
+    .split(/\s+|@/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase())
+    .join('') || 'P'
 }

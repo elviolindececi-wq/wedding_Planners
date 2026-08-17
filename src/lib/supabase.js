@@ -1,7 +1,7 @@
 import { createClient } from '@supabase/supabase-js'
 
 const url = import.meta.env.VITE_SUPABASE_URL?.trim()
-const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY?.trim()
+const publishableKey = (import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || import.meta.env.VITE_SUPABASE_ANON_KEY)?.trim()
 const expectedRef = import.meta.env.VITE_EXPECTED_SUPABASE_PROJECT_REF?.trim()
 
 function projectRefFromUrl(value) {
@@ -15,8 +15,8 @@ function projectRefFromUrl(value) {
 }
 
 export function assertSafeSupabaseConfig() {
-  if (!url && !anonKey) return { configured: false }
-  if (!url || !anonKey) throw new Error('Configuración Supabase incompleta.')
+  if (!url && !publishableKey) return { configured: false }
+  if (!url || !publishableKey) throw new Error('Configuración Supabase incompleta.')
   if (!expectedRef) {
     throw new Error('Falta VITE_EXPECTED_SUPABASE_PROJECT_REF. La app se niega a conectar sin esta guarda.')
   }
@@ -30,5 +30,5 @@ export function assertSafeSupabaseConfig() {
 }
 
 const safety = assertSafeSupabaseConfig()
-export const supabase = safety.configured ? createClient(url, anonKey) : null
+export const supabase = safety.configured ? createClient(url, publishableKey) : null
 export const isSupabaseConfigured = safety.configured
