@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { supabase } from '../../lib/supabase.js'
 import { useOrganization } from '../../organization/OrganizationProvider.jsx'
 import { getPlanningTemplate } from '../planning/planningTemplates.js'
+import { CURRENCIES } from '../../lib/currencies.js'
 
 const EMPTY_FORM = {
   event_type: 'wedding',
@@ -12,6 +13,7 @@ const EMPTY_FORM = {
   event_time: '',
   venue_name: '',
   city: '',
+  country: 'Paraguay',
   estimated_guests: '',
   currency: 'USD',
   status: 'planning',
@@ -38,6 +40,7 @@ export default function EventFormModal({ open, event = null, onClose, onSaved })
         event_time: event.event_time ? String(event.event_time).slice(0, 5) : '',
         venue_name: event.venue_name || '',
         city: event.city || '',
+        country: event.country || 'Paraguay',
         estimated_guests: event.estimated_guests ?? '',
         currency: event.currency || 'USD',
         status: event.status || 'planning',
@@ -82,6 +85,7 @@ export default function EventFormModal({ open, event = null, onClose, onSaved })
       event_time: form.event_time || null,
       venue_name: form.venue_name.trim() || null,
       city: form.city.trim() || null,
+      country: form.country.trim() || null,
       estimated_guests: form.estimated_guests === '' ? null : Number(form.estimated_guests),
       currency: form.currency,
       status: form.status,
@@ -183,17 +187,17 @@ export default function EventFormModal({ open, event = null, onClose, onSaved })
             <label>Hora<input type="time" value={form.event_time} onChange={(e) => change('event_time', e.target.value)} /></label>
           </div>
 
-          <div className="form-grid-2">
+          <div className="form-grid-3">
             <label>Lugar<input value={form.venue_name} onChange={(e) => change('venue_name', e.target.value)} placeholder="Salón / venue" /></label>
             <label>Ciudad<input value={form.city} onChange={(e) => change('city', e.target.value)} placeholder="Asunción" /></label>
+            <label>País<input value={form.country} onChange={(e) => change('country', e.target.value)} placeholder="Paraguay" /></label>
           </div>
 
           <div className="form-grid-3">
             <label>Invitados estimados<input type="number" min="0" value={form.estimated_guests} onChange={(e) => change('estimated_guests', e.target.value)} /></label>
             <label>Moneda
               <select value={form.currency} onChange={(e) => change('currency', e.target.value)}>
-                <option value="USD">USD</option>
-                <option value="PYG">PYG</option>
+                {CURRENCIES.map(item => <option key={item.code} value={item.code}>{item.code} · {item.label}</option>)}
               </select>
             </label>
             <label>Estado

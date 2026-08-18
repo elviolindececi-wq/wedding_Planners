@@ -12,6 +12,8 @@ import EventsPage from './features/events/EventsPage.jsx'
 import EventWorkspace from './features/events/EventWorkspace.jsx'
 import EventOverview from './features/events/EventOverview.jsx'
 import PlanningPage from './features/planning/PlanningPage.jsx'
+import BudgetPage from './features/budget/BudgetPage.jsx'
+import PaymentsPage from './features/payments/PaymentsPage.jsx'
 import EventSectionPlaceholder from './features/events/EventSectionPlaceholder.jsx'
 import VendorsPage from './features/vendors/VendorsPage.jsx'
 import CalendarPage from './features/calendar/CalendarPage.jsx'
@@ -43,7 +45,9 @@ export default function App() {
           <Route path="eventos/:eventId" element={<EventWorkspace />}>
             <Route index element={<EventOverview />} />
             <Route path="plan" element={<PlanningPage />} />
-            {['presupuesto','proveedores','cotizaciones','pagos','invitados','mesas','diseno','experiencia','personas','dia','documentos','notas'].map(path => <Route key={path} path={path} element={<EventSectionPlaceholder />} />)}
+            <Route path="presupuesto" element={<BudgetPage />} />
+            <Route path="pagos" element={<PaymentsPage />} />
+            {['proveedores','cotizaciones','invitados','mesas','diseno','experiencia','personas','dia','documentos','notas'].map(path => <Route key={path} path={path} element={<EventSectionPlaceholder />} />)}
           </Route>
           <Route path="proveedores" element={<VendorsPage />} />
           <Route path="calendario" element={<CalendarPage />} />
