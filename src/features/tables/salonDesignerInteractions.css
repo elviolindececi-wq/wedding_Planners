@@ -1,0 +1,411 @@
+/* v1.4.6 · Interacciones del diseñador portadas de Tu Boda Organizada.
+   Selección evidente + handles directos de rotación/redimensionado. */
+.salon-v146-editable{overflow:visible!important;outline:none}
+.salon-v146-editable.selected{
+  border:2px solid #8b5555!important;
+  box-shadow:0 0 0 4px rgba(139,85,85,.18),0 12px 26px rgba(71,45,50,.18)!important;
+  z-index:16!important;
+}
+.salon-v121-table-node.selected{
+  z-index:18!important;
+  filter:drop-shadow(0 10px 14px rgba(88,54,59,.16));
+}
+.salon-v121-table-node.selected::after{
+  content:"";
+  position:absolute;
+  inset:-10px;
+  border:2px solid #8b5555;
+  border-radius:14px;
+  box-shadow:0 0 0 4px rgba(139,85,85,.13);
+  pointer-events:none;
+  z-index:2;
+}
+.salon-v121-table-node.type-round.selected::after{border-radius:50%}
+.salon-v121-table-node.selected>.salon-v12-table{
+  border-width:3px!important;
+  border-color:#75484c!important;
+  background:#fffaf7!important;
+  box-shadow:0 0 0 3px rgba(139,85,85,.14),0 8px 20px rgba(62,40,44,.16)!important;
+}
+.salon-v146-selected-tag{
+  position:absolute;
+  left:50%;
+  top:-32px;
+  transform:translateX(-50%);
+  z-index:40;
+  max-width:190px!important;
+  overflow:visible!important;
+  text-overflow:clip!important;
+  padding:5px 8px;
+  border:1px solid #d6b8b3;
+  border-radius:999px;
+  background:#fffaf7;
+  color:#74494d;
+  box-shadow:0 4px 12px rgba(67,45,49,.12);
+  font-size:10px!important;
+  font-weight:850!important;
+  line-height:1!important;
+  white-space:nowrap;
+  pointer-events:none;
+}
+.salon-v146-table-tag{top:-38px}
+.salon-v146-handle{
+  position:absolute;
+  z-index:50;
+  width:28px;
+  height:28px;
+  min-width:28px;
+  padding:0;
+  border:2px solid #fffaf7;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  box-shadow:0 4px 12px rgba(63,42,46,.2);
+  color:#fff;
+  font:900 14px/1 Arial,sans-serif;
+  touch-action:none;
+  user-select:none;
+}
+.salon-v146-handle:hover{transform:scale(1.08)}
+.salon-v146-rotate-handle{
+  left:-18px;
+  bottom:-18px;
+  background:#c59b5e;
+  cursor:crosshair;
+}
+.salon-v146-resize-handle{
+  right:-18px;
+  bottom:-18px;
+  background:#8b5555;
+  cursor:nwse-resize;
+  border-radius:7px;
+}
+.salon-v146-editable>.salon-v146-rotate-handle{left:-16px;bottom:-16px}
+.salon-v146-editable>.salon-v146-resize-handle{right:-16px;bottom:-16px}
+.salon-v12-element.salon-v146-editable{cursor:grab}
+.salon-v12-element.salon-v146-editable:active,.salon-v12-table:active{cursor:grabbing}
+.salon-v12-floor{overscroll-behavior:contain}
+.salon-v12-canvas-foot span:first-child{font-weight:700;color:#75585c}
+@media (max-width:850px){
+  .salon-v146-handle{width:32px;height:32px;min-width:32px;font-size:16px}
+  .salon-v146-selected-tag{font-size:10.5px!important;top:-36px}
+  .salon-v146-table-tag{top:-42px}
+}
+
+/* v1.4.7 · Mesa seleccionada y geometría de sillas portadas de Tu Boda Organizada */
+.salon-v121-seat>i{
+  transform:translate(-50%,-10%) rotate(var(--chair-rotation,0deg))!important;
+  transform-origin:center center;
+}
+.salon-v121-table-node.selected::after{
+  inset:-14px!important;
+  border:2px solid rgba(139,85,85,.72)!important;
+  box-shadow:0 0 0 5px rgba(139,85,85,.12),0 12px 28px rgba(72,45,49,.16)!important;
+}
+.salon-v121-table-node.selected>.salon-v12-table{
+  background:#684248!important;
+  border-color:#5b363b!important;
+  color:#fffaf7!important;
+  box-shadow:0 0 0 3px rgba(139,85,85,.16),0 10px 24px rgba(58,35,39,.22)!important;
+}
+.salon-v121-table-node.selected>.salon-v12-table strong{
+  color:#fffaf7!important;
+  font-size:clamp(10px,1vw,15px)!important;
+}
+.salon-v121-table-node.selected>.salon-v12-table small,
+.salon-v121-table-node.selected>.salon-v12-table span{
+  color:rgba(255,250,247,.82)!important;
+}
+.salon-v147-table-kicker{
+  display:block!important;
+  color:rgba(255,250,247,.72)!important;
+  font-size:7px!important;
+  letter-spacing:.16em;
+  font-weight:900;
+  line-height:1;
+  margin-bottom:2px;
+}
+.salon-v146-table-tag{
+  background:#684248!important;
+  border-color:#684248!important;
+  color:#fffaf7!important;
+  box-shadow:0 5px 16px rgba(79,47,52,.24)!important;
+}
+
+.salon-v147-inspector-selected{
+  border:1px solid #dfc9c5;
+  border-radius:12px;
+  padding:10px;
+  background:linear-gradient(180deg,#fffdfa 0%,#fbf4f1 100%);
+  box-shadow:0 8px 24px rgba(76,51,55,.055);
+  margin-bottom:10px;
+}
+.salon-v147-inspector-head{margin-bottom:8px!important}
+.salon-v147-inspector-head h3{font-size:18px!important;color:#4c383c}
+.salon-v147-inspector-close{
+  width:28px;height:28px;border:0;border-radius:50%;background:transparent;color:#a48e91;
+  font-size:18px;line-height:1;cursor:pointer;display:grid;place-items:center;
+}
+.salon-v147-inspector-close:hover{background:#f3e6e2;color:#75484c}
+.salon-v147-capacity-card{
+  background:#f6efec;
+  border:1px solid #e2d1cd;
+  border-radius:11px;
+  padding:9px 10px;
+  margin-bottom:8px;
+}
+.salon-v147-capacity-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:7px}
+.salon-v147-capacity-top>span{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:#9a777b;font-weight:900}
+.salon-v147-capacity-top>strong{font-family:Georgia,serif;font-size:17px;color:#4f3d40}
+.salon-v147-capacity-top>strong.over{color:#b85e55}
+.salon-v147-capacity-top>strong small{font-family:inherit;font-size:12px;font-weight:400;color:#9b8689}
+.salon-v147-capacity-buttons{display:flex;gap:5px;margin-bottom:7px}
+.salon-v147-capacity-buttons button{
+  flex:1;min-width:36px;height:32px;border:1px solid #dfcfcb;border-radius:999px;background:#fffaf7;
+  color:#785e62;font-size:11px;font-weight:700;cursor:pointer;
+}
+.salon-v147-capacity-buttons button.active{background:#8b5555;border-color:#8b5555;color:#fff}
+.salon-v147-capacity-buttons button:disabled{opacity:.35;cursor:not-allowed}
+.salon-v147-measure-row{display:flex;align-items:center;justify-content:flex-end;gap:5px;color:#8a7478;font-size:10px}
+.salon-v147-measure-row input{
+  width:56px!important;padding:6px 5px!important;text-align:center!important;font-size:11px!important;border-radius:7px!important;
+  background:#fffdfa!important;
+}
+.salon-v147-measure-row b{font-weight:500;color:#b1a0a3}
+.salon-v147-measure-row em{font-style:normal;color:#9c898c}
+.salon-v147-chair-hint{text-align:right;margin-top:4px;font-size:9px;color:#9a777b;font-style:italic}
+
+.salon-v147-recommendations{
+  border:1px solid #eadfc9;background:#fffbf2;border-radius:10px;padding:8px 9px;margin-bottom:9px;
+}
+.salon-v147-recommendations p{margin:0 0 5px;font-size:8px;letter-spacing:.09em;font-weight:900;color:#a38455}
+.salon-v147-recommendations ul{margin:0;padding-left:16px;display:grid;gap:4px}
+.salon-v147-recommendations li{font-size:10px;line-height:1.35;color:#74625e}
+.salon-v147-name-field{margin-bottom:4px!important}
+.salon-v147-label-chips{display:flex;gap:4px;flex-wrap:wrap;margin:0 0 10px}
+.salon-v147-label-chips button{
+  border:1px solid #dfd1cd;border-radius:999px;background:#fffdfa;color:#80686c;padding:4px 7px;font-size:9px;cursor:pointer;
+}
+.salon-v147-label-chips button.active{background:#f0dfdc;border-color:#b98480;color:#70474b;font-weight:800}
+.salon-v147-section-title{margin:6px 0 5px!important;font-size:8px!important}
+.salon-v147-type-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;margin-bottom:9px}
+.salon-v147-type-grid button{
+  min-height:48px;border:1.5px solid #e0d4d1;border-radius:9px;background:#fffdfa;color:#8a7477;
+  display:grid;place-items:center;align-content:center;gap:2px;cursor:pointer;padding:5px 3px;
+}
+.salon-v147-type-grid button b{font-size:18px;line-height:1;font-family:Arial,sans-serif;font-weight:500}
+.salon-v147-type-grid button span{font-size:7.5px;letter-spacing:.06em;font-weight:900;color:inherit}
+.salon-v147-type-grid button.active{border-color:#8b5555;background:#f4e5e2;color:#75484c;box-shadow:0 0 0 2px rgba(139,85,85,.08)}
+.salon-v147-rotation-block{margin-bottom:9px}
+.salon-v147-rotation-row{display:grid;grid-template-columns:1fr auto 1fr auto;gap:4px;align-items:center}
+.salon-v147-rotation-row button{border:1px solid #dfd3d0;border-radius:8px;background:#fffdfa;color:#795b5f;padding:7px 4px;font-size:9px;cursor:pointer}
+.salon-v147-rotation-row span{font-size:10px;color:#806a6e;text-align:center;min-width:28px}
+.salon-v147-rotation-block small{display:block;margin-top:4px;font-size:8.5px;color:#a08d90;font-style:italic}
+.salon-v147-assigned-title{margin-top:4px!important;font-size:8px!important}
+
+/* La forma visual cambia también la disposición de sillas. */
+.salon-v121-table-node.type-square .salon-v12-table{border-radius:7px!important}
+.salon-v121-table-node.type-rect_h .salon-v12-table,
+.salon-v121-table-node.type-rect_v .salon-v12-table,
+.salon-v121-table-node.type-imperial .salon-v12-table{border-radius:6px!important}
+
+@media(max-width:1100px){
+  .salon-v147-type-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+
+
+
+/* v1.4.10 · La silla muestra una tarjetita legible al hacer click.
+   Ya no quedan etiquetas flotando sobre toda la mesa: se abre solo la silla tocada. */
+.salon-v121-seat{
+  overflow:visible!important;
+}
+.salon-v121-seat.card-open{
+  z-index:140!important;
+}
+.salon-v1410-seat-card{
+  position:absolute!important;
+  left:50%!important;
+  bottom:calc(100% + 12px)!important;
+  transform:translateX(-50%) rotate(calc(-1 * var(--table-rotation,0deg)))!important;
+  transform-origin:50% 100%!important;
+  z-index:160!important;
+  width:168px!important;
+  max-width:168px!important;
+  padding:9px 10px!important;
+  border:1px solid #d7c0bc!important;
+  border-radius:12px!important;
+  background:#fffdfa!important;
+  color:#553a3e!important;
+  box-shadow:0 10px 24px rgba(56,37,41,.18)!important;
+  text-align:left!important;
+  white-space:normal!important;
+  pointer-events:none!important;
+}
+.salon-v1410-seat-card::after{
+  content:''!important;
+  position:absolute!important;
+  left:50%!important;
+  top:100%!important;
+  width:12px!important;
+  height:12px!important;
+  margin-left:-6px!important;
+  background:#fffdfa!important;
+  border-right:1px solid #d7c0bc!important;
+  border-bottom:1px solid #d7c0bc!important;
+  transform:rotate(45deg)!important;
+}
+.salon-v1410-seat-card strong{
+  display:block!important;
+  margin:0 0 4px!important;
+  font-size:12px!important;
+  line-height:1.15!important;
+  font-weight:900!important;
+  color:#4d3136!important;
+}
+.salon-v1410-seat-card small{
+  display:block!important;
+  margin:0!important;
+  font-size:9.5px!important;
+  line-height:1.35!important;
+  color:#7a6769!important;
+}
+
+/* v1.4.11 · Tarjeta de silla fuera de la mesa transformada.
+   Se posiciona en coordenadas del plano para que nunca herede rotación ni quede tapada. */
+.salon-v1411-seat-popover{
+  position:absolute;
+  z-index:1000;
+  width:220px;
+  max-width:min(220px,calc(100% - 20px));
+  padding:12px 13px 11px;
+  border:1px solid #d8c0bc;
+  border-radius:14px;
+  background:#fffdfa;
+  color:#4e3438;
+  box-shadow:0 14px 34px rgba(54,36,40,.22);
+  text-align:left;
+  transform:translate(-50%,calc(-100% - 14px));
+  pointer-events:auto;
+}
+.salon-v1411-seat-popover.below{transform:translate(-50%,14px)}
+.salon-v1411-seat-popover::after{
+  content:"";
+  position:absolute;
+  left:50%;
+  width:12px;
+  height:12px;
+  background:#fffdfa;
+  transform:translateX(-50%) rotate(45deg);
+}
+.salon-v1411-seat-popover.above::after{
+  top:calc(100% - 6px);
+  border-right:1px solid #d8c0bc;
+  border-bottom:1px solid #d8c0bc;
+}
+.salon-v1411-seat-popover.below::after{
+  bottom:calc(100% - 6px);
+  border-left:1px solid #d8c0bc;
+  border-top:1px solid #d8c0bc;
+}
+.salon-v1411-seat-popover-close{
+  position:absolute;
+  top:7px;
+  right:7px;
+  width:24px;
+  height:24px;
+  min-width:24px;
+  padding:0;
+  border:0;
+  border-radius:50%;
+  background:#f5ebe8;
+  color:#8b6669;
+  font-size:16px;
+  line-height:1;
+  cursor:pointer;
+}
+.salon-v1411-seat-popover-kicker{
+  display:block;
+  margin:0 28px 5px 0;
+  color:#a06d70;
+  font-size:9px;
+  line-height:1.2;
+  font-weight:900;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+.salon-v1411-seat-popover strong{
+  display:block;
+  margin:0 24px 5px 0;
+  color:#463034;
+  font-family:Georgia,serif;
+  font-size:15px;
+  line-height:1.2;
+}
+.salon-v1411-seat-popover>small{
+  display:block;
+  color:#756367;
+  font-size:10.5px;
+  line-height:1.4;
+}
+.salon-v1411-seat-popover>em{
+  display:block;
+  margin-top:5px;
+  color:#9a7c7f;
+  font-size:9.5px;
+  font-style:normal;
+}
+.salon-v1411-seat-popover-actions{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:6px;
+  margin-top:10px;
+  padding-top:9px;
+  border-top:1px solid #eee1de;
+}
+.salon-v1411-seat-popover-actions button{
+  min-height:32px;
+  padding:6px 7px;
+  border:1px solid #8b5555;
+  border-radius:8px;
+  background:#8b5555;
+  color:#fff;
+  font-size:9.5px;
+  font-weight:800;
+  cursor:pointer;
+}
+.salon-v1411-seat-popover-actions button.ghost{
+  border-color:#ddcbc7;
+  background:#fffaf7;
+  color:#795a5e;
+}
+.salon-v121-seat.card-open{
+  z-index:80!important;
+  filter:drop-shadow(0 0 3px rgba(139,85,85,.38));
+}
+
+/* Capacidad: preserva la capacidad original del preset (ej. 18) y ofrece
+   las capacidades mayores propias del tipo, igual que Tu Boda Organizada. */
+.salon-v147-capacity-buttons button small{
+  display:block;
+  margin-top:1px;
+  font-size:6.5px;
+  line-height:1;
+  font-weight:800;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+  opacity:.78;
+}
+.salon-v1411-capacity-note{
+  margin:-1px 0 7px;
+  padding:6px 7px;
+  border-radius:7px;
+  background:#fff8ed;
+  color:#816b50;
+  font-size:9px;
+  line-height:1.35;
+}
+@media(max-width:850px){
+  .salon-v1411-seat-popover{width:210px}
+  .salon-v1411-seat-popover-actions{grid-template-columns:1fr}
+}

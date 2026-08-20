@@ -15,7 +15,11 @@ import PlanningPage from './features/planning/PlanningPage.jsx'
 import BudgetPage from './features/budget/BudgetPage.jsx'
 import PaymentsPage from './features/payments/PaymentsPage.jsx'
 import EventSectionPlaceholder from './features/events/EventSectionPlaceholder.jsx'
+import GuestsPage from './features/guests/GuestsPage.jsx'
+import TablesPage from './features/tables/TablesPage.jsx'
+import DesignInspirationPage from './features/design/DesignInspirationPage.jsx'
 import VendorsPage from './features/vendors/VendorsPage.jsx'
+import EventVendorsPage from './features/vendors/EventVendorsPage.jsx'
 import CalendarPage from './features/calendar/CalendarPage.jsx'
 import ResourcesPage from './features/resources/ResourcesPage.jsx'
 import SimplePage from './features/settings/SimplePage.jsx'
@@ -47,7 +51,12 @@ export default function App() {
             <Route path="plan" element={<PlanningPage />} />
             <Route path="presupuesto" element={<BudgetPage />} />
             <Route path="pagos" element={<PaymentsPage />} />
-            {['proveedores','cotizaciones','invitados','mesas','diseno','experiencia','personas','dia','documentos','notas'].map(path => <Route key={path} path={path} element={<EventSectionPlaceholder />} />)}
+            <Route path="proveedores" element={<EventVendorsPage />} />
+            <Route path="cotizaciones" element={<Navigate to="../proveedores?seccion=cotizaciones" replace />} />
+            <Route path="invitados" element={<GuestsPage />} />
+            <Route path="mesas" element={<TablesPage />} />
+            <Route path="diseno" element={<DesignInspirationPage />} />
+            {['experiencia','personas','dia','documentos','notas'].map(path => <Route key={path} path={path} element={<EventSectionPlaceholder />} />)}
           </Route>
           <Route path="proveedores" element={<VendorsPage />} />
           <Route path="calendario" element={<CalendarPage />} />

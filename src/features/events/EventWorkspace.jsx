@@ -4,7 +4,7 @@ import { supabase } from '../../lib/supabase.js'
 import EventFormModal from './EventFormModal.jsx'
 
 const tabs = [
-  ['', 'Resumen'], ['plan', 'Planificación'], ['presupuesto', 'Presupuesto'], ['proveedores', 'Proveedores'], ['cotizaciones', 'Cotizaciones'], ['pagos', 'Pagos'], ['invitados', 'Invitados'], ['mesas', 'Mesas'], ['diseno', 'Diseño & inspiración'], ['experiencia', 'Experiencia'], ['personas', 'Personas y roles'], ['dia', 'Día del evento'], ['documentos', 'Documentos'], ['notas', 'Notas'],
+  ['', 'Resumen'], ['plan', 'Planificación'], ['presupuesto', 'Presupuesto'], ['proveedores', 'Proveedores'], ['pagos', 'Pagos'], ['invitados', 'Invitados'], ['mesas', 'Mesas'], ['diseno', 'Diseño & inspiración'], ['experiencia', 'Experiencia'], ['personas', 'Personas y roles'], ['dia', 'Día del evento'], ['documentos', 'Documentos'], ['notas', 'Notas'],
 ]
 
 export default function EventWorkspace() {

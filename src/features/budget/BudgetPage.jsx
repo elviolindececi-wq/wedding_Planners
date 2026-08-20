@@ -7,6 +7,7 @@ import BudgetItemModal from './BudgetItemModal.jsx'
 import MoneyInput from '../../components/MoneyInput.jsx'
 import { formatMoney } from '../../lib/money.js'
 import { getDefaultBudgetCategories, getDistributionWeightMap, normalizeCategoryName } from './budgetDefaults.js'
+import { paymentEventAmount } from '../../lib/paymentMoney.js'
 
 export default function BudgetPage() {
   const { event, refreshEvent } = useOutletContext()
@@ -83,10 +84,10 @@ export default function BudgetPage() {
     const map = new Map()
     for (const payment of payments) {
       if (payment.status !== 'paid' || !payment.budget_item_id) continue
-      map.set(payment.budget_item_id, (map.get(payment.budget_item_id) || 0) + num(payment.amount))
+      map.set(payment.budget_item_id, (map.get(payment.budget_item_id) || 0) + paymentEventAmount(payment, event.currency))
     }
     return map
-  }, [payments])
+  }, [payments, event.currency])
 
   const categoryStats = useMemo(() => categories.map(cat => {
     const catItems = items.filter(item => item.category_id === cat.id)
@@ -103,7 +104,7 @@ export default function BudgetPage() {
     const estimated = sum(categoryStats.map(cat => cat.estimated))
     const quoted = sum(categoryStats.map(cat => cat.quoted))
     const contracted = sum(categoryStats.map(cat => cat.contracted))
-    const paid = sum(payments.filter(p => p.status === 'paid').map(p => p.amount))
+    const paid = sum(payments.filter(p => p.status === 'paid').map(p => paymentEventAmount(p, event.currency)))
     const pending = Math.max(0, contracted - paid)
     const total = num(budgetTotal)
     return {

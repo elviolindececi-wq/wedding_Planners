@@ -26,6 +26,7 @@ export default function PlanningPage() {
   const [error, setError] = useState('')
   const [query, setQuery] = useState('')
   const [status, setStatus] = useState('active')
+  const [collapsedStages, setCollapsedStages] = useState(new Set())
   const [phase, setPhase] = useState('all')
   const [category, setCategory] = useState('all')
   const [modalOpen, setModalOpen] = useState(false)
@@ -50,10 +51,13 @@ export default function PlanningPage() {
   useEffect(() => { loadTasks() }, [loadTasks])
 
   const today = new Date().toISOString().slice(0, 10)
+  const eventAddedDate = String(event.created_at || today).slice(0, 10)
   const activeTasks = tasks.filter(task => !['done', 'canceled'].includes(task.status))
   const doneTasks = tasks.filter(task => task.status === 'done')
-  const overdueTasks = activeTasks.filter(task => task.due_date && task.due_date < today)
-  const upcomingTasks = activeTasks.filter(task => task.due_date && task.due_date >= today)
+  const historicalTasks = activeTasks.filter(task => isHistoricalTemplateTask(task, eventAddedDate))
+  const historicalIds = useMemo(() => new Set(historicalTasks.map(task => task.id)), [historicalTasks])
+  const overdueTasks = activeTasks.filter(task => task.due_date && task.due_date < today && !historicalIds.has(task.id))
+  const upcomingTasks = activeTasks.filter(task => task.due_date && task.due_date >= today && daysBetween(today, task.due_date) <= 30)
 
   const stageOrder = useMemo(() => getPlanningStageOrder(event), [event])
   const stageRank = useMemo(() => new Map(stageOrder.map((item, index) => [item, index])), [stageOrder])
@@ -73,13 +77,16 @@ export default function PlanningPage() {
     const normalized = query.trim().toLocaleLowerCase('es')
     return tasks.filter(task => {
       if (status === 'active' && ['done', 'canceled'].includes(task.status)) return false
-      if (status !== 'all' && status !== 'active' && task.status !== status) return false
+      if (status === 'attention' && !(overdueTasks.some(item => item.id === task.id) || task.status === 'blocked')) return false
+      if (status === 'review' && !historicalIds.has(task.id)) return false
+      if (status === 'upcoming' && !upcomingTasks.some(item => item.id === task.id)) return false
+      if (!['all','active','attention','review','upcoming'].includes(status) && task.status !== status) return false
       if (phase !== 'all' && task.phase !== phase) return false
       if (category !== 'all' && task.category !== category) return false
       if (normalized && !`${task.title} ${task.description || ''} ${task.responsible_label || ''} ${task.phase || ''} ${task.category || ''}`.toLocaleLowerCase('es').includes(normalized)) return false
       return true
     })
-  }, [tasks, status, phase, category, query])
+  }, [tasks, status, phase, category, query, historicalIds, overdueTasks, upcomingTasks])
 
   const groupedTasks = useMemo(() => {
     const groups = new Map()
@@ -205,6 +212,24 @@ export default function PlanningPage() {
     setModalOpen(true)
   }
 
+  function toggleStage(stage) {
+    setCollapsedStages(current => {
+      const next = new Set(current)
+      if (next.has(stage)) next.delete(stage)
+      else next.add(stage)
+      return next
+    })
+  }
+
+  async function resolveHistoricalStage(stage, stageTasks) {
+    const pendingHistorical = stageTasks.filter(task => historicalIds.has(task.id) && !['done','canceled'].includes(task.status))
+    if (!pendingHistorical.length) return
+    if (!window.confirm(`¿Marcar ${pendingHistorical.length} tareas de “${stage}” como resueltas? Usá esta opción solo si esas decisiones ya fueron realizadas antes de cargar el evento.`)) return
+    const { error: updateError } = await supabase.from('tasks').update({ status:'done', updated_at:new Date().toISOString() }).eq('event_id', event.id).in('id', pendingHistorical.map(task => task.id))
+    if (updateError) setError(updateError.message)
+    else loadTasks()
+  }
+
   const templateButtonLabel = loadingTemplate
     ? 'Cargando…'
     : hasFullCurrentTemplate
@@ -235,10 +260,11 @@ export default function PlanningPage() {
 
       <div className="planning-metrics">
         <Metric label="Progreso" value={`${progress}%`} detail={`${doneTasks.length} completadas`} />
-        <Metric label="Pendientes" value={activeTasks.length} detail={`${upcomingTasks.length} con fecha próxima`} />
-        <Metric label="Vencidas" value={overdueTasks.length} detail={overdueTasks.length ? 'Necesitan atención' : 'Todo al día'} danger={overdueTasks.length > 0} />
-        <Metric label="Total" value={tasks.filter(task => task.status !== 'canceled').length} detail={`${phases.length} etapas cargadas`} />
+        <Metric label="Necesitan atención" value={overdueTasks.length} detail={overdueTasks.length ? 'Vencidas desde que cargaste el evento' : 'Sin vencimientos reales'} danger={overdueTasks.length > 0} />
+        <Metric label="Etapas anteriores" value={historicalTasks.length} detail={historicalTasks.length ? 'Revisar o marcar como ya resueltas' : 'Nada pendiente de etapas previas'} />
+        <Metric label="Próximos 30 días" value={upcomingTasks.length} detail="Tareas con fecha próxima" />
       </div>
+      {historicalTasks.length > 0 && <div className="planning-context-banner"><div><strong>Este evento ya estaba en marcha cuando lo cargaste.</strong><span>Las tareas cuya fecha sugerida quedó antes del alta del evento no se cuentan como “vencidas”: aparecen como etapas anteriores para revisar.</span></div><button className="secondary-btn" onClick={() => setStatus('review')}>Revisar etapas anteriores</button></div>}
 
       <div className="progress planning-progress"><i style={{ width: `${progress}%` }} /></div>
 
@@ -246,6 +272,9 @@ export default function PlanningPage() {
         <input className="search-input" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Buscar tarea, responsable, categoría o etapa…" />
         <select value={status} onChange={(e) => setStatus(e.target.value)}>
           <option value="active">Pendientes activas</option>
+          <option value="attention">Necesita atención</option>
+          <option value="upcoming">Próximos 30 días</option>
+          <option value="review">Etapas anteriores por revisar</option>
           <option value="all">Todos los estados</option>
           <option value="pending">Pendientes</option>
           <option value="in_progress">En curso</option>
@@ -272,30 +301,32 @@ export default function PlanningPage() {
           {groupedTasks.map(([stage, stageTasks]) => {
             const completedInStage = stageTasks.filter(task => task.status === 'done').length
             return (
-              <section className="task-stage-group" key={stage}>
-                <header className="task-stage-head">
-                  <div>
-                    <span className="task-stage-kicker">ETAPA</span>
-                    <h3>{stage}</h3>
+              <section className={`task-stage-group ${collapsedStages.has(stage) ? 'is-collapsed' : ''}`} key={stage}>
+                <header className="task-stage-head task-stage-head-clickable" onClick={() => toggleStage(stage)}>
+                  <div className="task-stage-title-wrap">
+                    <span className="stage-chevron">{collapsedStages.has(stage) ? '›' : '⌄'}</span>
+                    <div><span className="task-stage-kicker">ETAPA</span><h3>{stage}</h3></div>
                   </div>
-                  <div className="task-stage-count">
-                    <strong>{completedInStage}/{stageTasks.length}</strong>
-                    <span>completadas</span>
+                  <div className="task-stage-summary">
+                    {stageTasks.filter(task => historicalIds.has(task.id)).length > 0 && <span className="review-badge">{stageTasks.filter(task => historicalIds.has(task.id)).length} por revisar</span>}
+                    <div className="task-stage-count"><strong>{completedInStage}/{stageTasks.length}</strong><span>completadas</span></div>
+                    {stageTasks.some(task => historicalIds.has(task.id) && !['done','canceled'].includes(task.status)) && <button className="text-action strong-action" onClick={e => { e.stopPropagation(); resolveHistoricalStage(stage, stageTasks) }}>Marcar etapa resuelta</button>}
                   </div>
                 </header>
 
-                <div className="task-list">
+                {!collapsedStages.has(stage) && <div className="task-list">
                   {stageTasks.map(task => (
                     <TaskRow
                       key={task.id}
                       task={task}
                       today={today}
+                      historical={historicalIds.has(task.id)}
                       onToggle={toggleDone}
                       onEdit={openEdit}
                       onRemove={removeTask}
                     />
                   ))}
-                </div>
+                </div>}
               </section>
             )
           })}
@@ -331,10 +362,10 @@ export default function PlanningPage() {
   )
 }
 
-function TaskRow({ task, today, onToggle, onEdit, onRemove }) {
-  const overdue = task.due_date && task.due_date < today && !['done', 'canceled'].includes(task.status)
+function TaskRow({ task, today, historical, onToggle, onEdit, onRemove }) {
+  const overdue = !historical && task.due_date && task.due_date < today && !['done', 'canceled'].includes(task.status)
   return (
-    <article className={`task-row ${task.status === 'done' ? 'is-done' : ''} ${overdue ? 'is-overdue' : ''}`}>
+    <article className={`task-row ${task.status === 'done' ? 'is-done' : ''} ${overdue ? 'is-overdue' : ''} ${historical ? 'is-historical' : ''}`}>
       <button
         className={`task-check ${task.status === 'done' ? 'checked' : ''}`}
         onClick={() => onToggle(task)}
@@ -356,9 +387,10 @@ function TaskRow({ task, today, onToggle, onEdit, onRemove }) {
         <div className="task-meta">
           <span className={overdue ? 'overdue-copy' : ''}>
             {task.due_date
-              ? `${overdue ? 'Venció' : 'Vence'} ${formatDate(task.due_date)}${task.due_time ? ` · ${String(task.due_time).slice(0, 5)}` : ''}`
+              ? `${historical ? 'Fecha sugerida original' : overdue ? 'Venció' : 'Vence'} ${formatDate(task.due_date)}${task.due_time ? ` · ${String(task.due_time).slice(0, 5)}` : ''}`
               : 'Sin fecha límite'}
           </span>
+          {historical && <span className="review-badge">Etapa anterior · revisar</span>}
           {task.due_date && <span className={`date-source-label date-source-${task.due_date_source || 'manual'}`}>{dateSourceLabel(task)}</span>}
           {task.responsible_label && <span>Responsable: {task.responsible_label}</span>}
           {task.google_calendar_enabled && <span>Calendar preparado</span>}
@@ -395,6 +427,9 @@ function formatDate(value) {
 function normalizeTitle(value) {
   return String(value || '').trim().toLocaleLowerCase('es')
 }
+
+function isHistoricalTemplateTask(task, eventAddedDate) { return Boolean(task.template_key && task.due_date && task.due_date < eventAddedDate && !['done','canceled'].includes(task.status)) }
+function daysBetween(a,b) { return Math.ceil((new Date(`${b}T00:00:00Z`) - new Date(`${a}T00:00:00Z`)) / 86400000) }
 
 function dateSourceLabel(task) {
   if (task.due_date_source === 'suggested') return 'Fecha sugerida'
